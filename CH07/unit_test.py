@@ -45,10 +45,13 @@ class TestSVM(unittest.TestCase):
         x_1 = np.array([x1, 0, 1])
         x_2 = np.array([0, x2, 1])
         y = np.array([-1, 0, 1])
-        lines = list()
-        for p in zip([(sympy.solve(e)[0], 0) for e in np.sum(w * x_1) + y],
-                     [(0, sympy.solve(e)[0]) for e in np.sum(w * x_2) + y]):
-            lines.append(p)
+        lines = list(
+            zip(
+                [(sympy.solve(e)[0], 0) for e in np.sum(w * x_1) + y],
+                [(0, sympy.solve(e)[0]) for e in np.sum(w * x_2) + y],
+            )
+        )
+
         # lines [H1, H, H2]
 
         for line_xs, line_ys in lines:
@@ -91,7 +94,6 @@ class TestSVM(unittest.TestCase):
     @unittest.skipIf(skip_flag, "debug")
     def test_e73(self):
         logger.info("This ex is for introduce H and phi have not only one expression.")
-        pass
 
     def test_e71_(self):
         # use this solver project
@@ -127,8 +129,11 @@ class TestSVM(unittest.TestCase):
         y = df[2].values
         clf = SVM(n_iters=40, verbose=False)
         clf.fit(X, y)
-        logger.info("test_mlia: alpha is %s b is %s" % (str(clf.alpha[clf.alpha > 0.001]), str(clf.b)))
-        logger.info("test_mlia: support vector %s "% str(X[clf.alpha > 0.001, :]))
+        logger.info(
+            f"test_mlia: alpha is {str(clf.alpha[clf.alpha > 0.001])} b is {str(clf.b)}"
+        )
+
+        logger.info(f"test_mlia: support vector {str(X[clf.alpha > 0.001, :])} ")
 
     @unittest.skipIf(skip_flag, "debug")
     def test_f76(self):

@@ -50,16 +50,15 @@ class MaxEnt:
     def _initparams(self):
         self._N = len(self._samples)
         self._n = len(self._numXY)  # 这个大小， 是BOW和标签组合的大小。
-        self._C = max([len(sample) - 1 for sample in self._samples])  # -1 是为了去掉标签
+        self._C = max(len(sample) - 1 for sample in self._samples)
         self._w = [0] * self._n
         self._lastw = self._w[:]
         self._sample_ep()
 
     def _convergence(self):
-        for w, lw in zip(self._w, self._lastw):
-            if math.fabs(w - lw) >= self._EPS:
-                return False
-        return True
+        return all(
+            math.fabs(w - lw) < self._EPS for w, lw in zip(self._w, self._lastw)
+        )
 
     def _sample_ep(self):
         """
@@ -83,10 +82,7 @@ class MaxEnt:
         # calculate Z(X), 计算方法参见公式(15)
         ZX = 0
         for y in self._Y:
-            s = 0
-            for x in X:
-                if (x, y) in self._numXY:
-                    s += self._w[self._xyID[(x, y)]]
+            s = sum(self._w[self._xyID[(x, y)]] for x in X if (x, y) in self._numXY)
             # 如果x, y不存在, 那么掉不到这个if里面来, s 保持0, ZX变成计数
             ZX += math.exp(s)
         return ZX
@@ -138,7 +134,7 @@ class MaxEnt:
 
     def train(self, maxiter=1000):
         self._initparams()
-        for i in range(0, maxiter):
+        for i in range(maxiter):
             # print("Iter:%d..." % i)
             self._lastw = self._w[:]  # 保存上一轮权值
             self._model_ep()
@@ -154,8 +150,7 @@ class MaxEnt:
     def predict(self, X):
         # 这个实际上是predict_proba
         X_ = X.strip().split("\t")
-        prob = self._pyx(X_)
-        return prob
+        return self._pyx(X_)
 
 
 if __name__ == "__main__":

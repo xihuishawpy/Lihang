@@ -65,15 +65,15 @@ class LogisticRegression(object):
 def f(x_, y_, w_):
     # Logistic Regression Loss
     m = y_.size
-    rst_ = -(1 / m) * np.sum(np.dot(x_, w_) * y_ - np.log(1 + np.exp(np.dot(x_, w_))))
-    return rst_
+    return -(1 / m) * np.sum(
+        np.dot(x_, w_) * y_ - np.log(1 + np.exp(np.dot(x_, w_)))
+    )
 
 
 def g(x_, y_, w_):
     m = y_.size
-    rst_ = (1 / m) * np.dot(x_.T, y_ * sigmoid(np.dot(x_, w_)))
     # rst_ = np.dot(x_.T, y_ * sigmoid(np.dot(x_, w_)))
-    return rst_
+    return (1 / m) * np.dot(x_.T, y_ * sigmoid(np.dot(x_, w_)))
 
 
 def sigmoid(x_):

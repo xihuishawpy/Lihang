@@ -12,7 +12,7 @@ class TestnbMethods(unittest.TestCase):
 
     def test_e41(self):
         data = pd.read_csv("./Input/data_4-1.txt", header=None, sep=",")
-        X = data[data.columns[0:2]]
+        X = data[data.columns[:2]]
         y = data[data.columns[2]]
         clf = NB(1)
         clf.fit(X, y)
@@ -21,7 +21,7 @@ class TestnbMethods(unittest.TestCase):
 
     def test_e42(self):
         data = pd.read_csv("./Input/data_4-1.txt", header=None, sep=",")
-        X = data[data.columns[0:2]].values
+        X = data[data.columns[:2]].values
         y = data[data.columns[2]]
         clf = NB(1)
         clf.fit(X, y)

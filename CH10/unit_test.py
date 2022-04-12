@@ -33,7 +33,6 @@ class TestHHMMethods(unittest.TestCase):
             pi = [1/raw_data[["pi"]].apply(np.isnan).values.flatten().sum()]*N
         logger.info("\nT\n%s\nA\n%s\nB\n%s\npi\n%s\nM\n%s\nN\n%s\nO\n%s\nQ\n%s\nV\n%s"
                     % (T, A, B, pi, M, N, O, Q, V))
-        pass
 
     # @unittest.skip("EM only")
     def test_e102(self):
@@ -97,7 +96,7 @@ class TestHHMMethods(unittest.TestCase):
         # p_star
         self.assertAlmostEqual(0.0147, prob, places=5)
         self.assertSequenceEqual([2, 2, 2], states.tolist())
-        logger.info("P star is %s, I star is %s" % (prob, states))
+        logger.info(f"P star is {prob}, I star is {states}")
         # print("参考答案")
         # print(np.array([[0.1,     0.028,   0.00756],
         #                 [0.016,   0.0504,  0.01008],
@@ -229,7 +228,10 @@ class TestHHMMethods(unittest.TestCase):
         prob, states = hmm_backward.decode(X)
         prob_fwd, _ = hmm_backward._do_forward(X)
         prob_bwd, _ = hmm_backward._do_backward(X)
-        logger.info("decode prob %s, forward prob %s, backward prob %s" % (prob, prob_fwd, prob_bwd))
+        logger.info(
+            f"decode prob {prob}, forward prob {prob_fwd}, backward prob {prob_bwd}"
+        )
+
         logger.info(states)
         logger.info("alpha\n %s" % hmm_backward.alpha)
         logger.info("beta\n%s" % hmm_backward.beta)
@@ -256,7 +258,10 @@ class TestHHMMethods(unittest.TestCase):
         prob_fwd, _ = hmm_backward._do_forward(X)
         prob_bwd, _ = hmm_backward._do_backward(X)
         logger.info("----q103----")
-        logger.info("decode prob %s, forward prob %s, backward prob %s" % (prob, prob_fwd, prob_bwd))
+        logger.info(
+            f"decode prob {prob}, forward prob {prob_fwd}, backward prob {prob_bwd}"
+        )
+
         logger.info(states)
         logger.info("alpha\n %s" % hmm_backward.alpha)
         logger.info("beta\n%s" % hmm_backward.beta)
