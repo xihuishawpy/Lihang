@@ -20,13 +20,13 @@ class TestMEMethods(unittest.TestCase):
     def test_e91(self):
         # 这个是个伯努利分布, 例子讲的是EM算法, 不是GMM. 理解这里的关系
         sample = np.array([1, 1, 0, 1, 0, 0, 1, 0, 1, 1])
-        logger.info("sample %s" % sample)
+        logger.info(f"sample {sample}")
         pi = 0.5
         p = 0.5
         q = 0.5
         logger.info("init prob pi=%1.1f, p=%1.1f, q=%1.1f" % (pi, p, q))
         mu = np.ones(sample.shape) / 2
-        logger.info(("mu: %s" % mu))
+        logger.info(f"mu: {mu}")
         for n_iter in range(10):
             # E Step
             for j, yj in enumerate(sample):
@@ -46,7 +46,7 @@ class TestMEMethods(unittest.TestCase):
         q = 0.7
         logger.info("init prob pi=%1.1f, p=%1.1f, q=%1.1f" % (pi, p, q))
         mu = np.ones(sample.shape) / 2
-        logger.info(("mu: %s" % mu))
+        logger.info(f"mu: {mu}")
         for n_iter in range(10):
             # E Step
             for j, yj in enumerate(sample):
@@ -79,7 +79,7 @@ class TestMEMethods(unittest.TestCase):
         # mu = sample*pi
         # mu += (1-sample)*(1-pi)
         mu = np.ones(sample.shape) * 0.5
-        logger.info(("mu: %s" % mu))
+        logger.info(f"mu: {mu}")
         for n_iter in range(10):
             for j, yj in enumerate(sample):
                 if yj:

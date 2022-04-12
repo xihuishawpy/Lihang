@@ -68,12 +68,12 @@ class BMM(object):
 
         self.mu = np.stack((1 - self.mu, self.mu), axis=-1)
 
-        for i in range(self.max_iter):
+        for _ in range(self.max_iter):
             # print(self.alpha, "\n", self.mu[:, 0], "\n", self.gamma, "\n")
             self.do_e_step()
             self.do_m_step()
             if self.verbose:
-                logger.info("alpha %s" % self.alpha)
+                logger.info(f"alpha {self.alpha}")
                 logger.info(self.mu)
             if self.is_convergence():
                 break
@@ -83,9 +83,7 @@ class BMM(object):
         return False
 
     def density(self):
-        # Bernoulli Distribution Density
-        rst = np.dot(self.X, self.mu.T)
-        return rst
+        return np.dot(self.X, self.mu.T)
 
     def do_e_step(self):
         # 更新gamma
@@ -119,12 +117,11 @@ if __name__ == '__main__':
 
     ap = argparse.ArgumentParser()
     ap.add_argument("-p", "--path", required=False, help="path to input data file")
-    args = vars(ap.parse_args())
-
 else:
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
 
     ap = argparse.ArgumentParser()
     ap.add_argument("-p", "--path", required=False, help="path to input data")
-    args = vars(ap.parse_args())
+
+args = vars(ap.parse_args())

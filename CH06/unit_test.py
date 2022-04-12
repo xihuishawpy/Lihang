@@ -118,7 +118,7 @@ class TestMEMethods(unittest.TestCase):
 
         x = x[:100]
         y = y[:100]
-        logger.info("%s, %s" % (x.shape, y.shape))
+        logger.info(f"{x.shape}, {y.shape}")
 
         clf = LogisticRegression()
         clf.f = f

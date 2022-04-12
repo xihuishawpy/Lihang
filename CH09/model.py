@@ -24,12 +24,13 @@ class TripleCoin(object):
         :return:
         """
         rst = np.empty(1)
-        for n_iter in range(n):
-            pi_ = np.random.binomial(1, self.pi, 1)
-            if pi_:
-                rst = np.hstack((rst, np.random.binomial(1, self.p, 1)))
-            else:
-                rst = np.hstack((rst, np.random.binomial(1, self.q, 1)))
+        for _ in range(n):
+            rst = (
+                np.hstack((rst, np.random.binomial(1, self.p, 1)))
+                if (pi_ := np.random.binomial(1, self.pi, 1))
+                else np.hstack((rst, np.random.binomial(1, self.q, 1)))
+            )
+
         return rst[1:]
 
 
@@ -39,12 +40,10 @@ if __name__ == '__main__':
 
     ap = argparse.ArgumentParser()
     ap.add_argument("-p", "--path", required=False, help="path to input data file")
-    args = vars(ap.parse_args())
-
 else:
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
 
     ap = argparse.ArgumentParser()
     ap.add_argument("-p", "--path", required=False, help="path to input data")
-    args = vars(ap.parse_args())
+args = vars(ap.parse_args())

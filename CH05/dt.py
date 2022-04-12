@@ -16,7 +16,7 @@ class dt(object):
                  tol=10e-3,
                  criterion='gain',
                  min_samples_leaf=5):
-        self.tree = dict()
+        self.tree = {}
         self.tol = tol
         self.criterion = criterion
         self.criteria = {"gain": self._gain,
@@ -37,14 +37,12 @@ class dt(object):
         if parent is None:
             parent = self.tree
         key_x = list(parent.keys())[0]
-        # is leaf
         if parent[key_x] is None:
             # {key_x: None} is leaf node
             return key_x
-        else:
-            key_child = X[key_x].values[0]
-            # print("\n%s|%s|%s|%s\n" % (parent, key_x, key_child, parent[key_x][key_child].keys()))
-            return self._search(X, parent=parent[key_x][key_child])
+        key_child = X[key_x].values[0]
+        # print("\n%s|%s|%s|%s\n" % (parent, key_x, key_child, parent[key_x][key_child].keys()))
+        return self._search(X, parent=parent[key_x][key_child])
 
     def predict(self,
                 X):
@@ -124,11 +122,11 @@ class dt(object):
                 return {ck[np.argmax(cnts)]: None}
 
             cols.remove(rst_col)
-            rst = dict()
+            rst = {}
             X_sub = X[cols]
             for x in np.unique(X[rst_col]):
                 mask = X[rst_col] == x
-                rst.update({x: self._build_tree(X_sub[mask], y[mask])})
+                rst[x] = self._build_tree(X_sub[mask], y[mask])
             self.tree = {rst_col: rst}
         return self.tree
 

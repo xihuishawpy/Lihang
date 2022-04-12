@@ -17,14 +17,11 @@ class Tree(object):
                  name=None,
                  criterion="entropy"):
 
-        self.tree_ = dict()
+        self.tree_ = {}
         self.feas = feas
         self.eps = eps
         self.criterion = criterion
-        if not name:
-            self.name = "Decision Tree"
-        else:
-            self.name = name
+        self.name = name or "Decision Tree"
 
     def fit(self, x, y):
         self.tree_ = self._build_tree(x, y, self.eps)
@@ -33,10 +30,7 @@ class Tree(object):
     def predict(self, x, x_tree=None):
 
         if len(x.shape) == 2:
-            rst = []
-            for x_ in x:
-                rst.append(self.predict(x_))
-            return rst
+            return [self.predict(x_) for x_ in x]
 
         if not x_tree:
             x_tree = self.tree_
@@ -48,10 +42,7 @@ class Tree(object):
             if key.split("__")[0] == x[x_idx]:
                 tree_key = key
                 x_tree = x_tree[tree_key]
-        if type(x_tree) == dict:
-            return self.predict(x, x_tree)
-        else:
-            return x_tree
+        return self.predict(x, x_tree) if type(x_tree) == dict else x_tree
 
     def _build_tree(self, x, y, eps):
         feas = np.arange(x.shape[1])
@@ -60,8 +51,14 @@ class Tree(object):
         if len(set(labels)) == 1:
             return labels[0]
 
-        max_label = max([(i, len(list(filter(lambda tmp: tmp == i, labels)))) for i in set(labels)]
-                        , key=lambda tmp: tmp[1])[0]
+        max_label = max(
+            (
+                (i, len(list(filter(lambda tmp: tmp == i, labels))))
+                for i in set(labels)
+            ),
+            key=lambda tmp: tmp[1],
+        )[0]
+
 
         # step2: empty features
         if len(feas) == 0:
@@ -77,8 +74,6 @@ class Tree(object):
                 gda = gain(A, D)
             elif self.criterion == "gr":
                 gda = gain_ratio(A, D)
-            elif self.criterion == "gini":
-                pass
             # uncomment this line for ex 5.3 gda result check
             # print(gda)
             if max_criterion < gda:
@@ -87,17 +82,20 @@ class Tree(object):
         # step4: eps
         if max_criterion < eps:
             return max_label
-        T = dict()
-        sub_T = dict()
+        T = {}
+        sub_T = {}
         for x_A in set(x[:, max_fea]):
             sub_D = D[x[:, max_fea] == x_A]
             sub_x = x[x[:, max_fea] == x_A, :]
             sub_x = np.delete(sub_x, max_fea, 1)
             # step6:
-            sub_T[str(x_A) + "__" + str(sub_D.shape[0])] = self._build_tree(sub_x, sub_D, eps)
+            sub_T[f"{str(x_A)}__{str(sub_D.shape[0])}"] = self._build_tree(
+                sub_x, sub_D, eps
+            )
+
         # step5: T
         # self.tree_[max_fea] = sub_tree
-        T[str(self.feas[max_fea]) + "__" + str(D.shape[0])] = sub_T
+        T[f"{str(self.feas[max_fea])}__{str(D.shape[0])}"] = sub_T
         return T
 
     def describe_tree(self, tree=None):
@@ -105,8 +103,7 @@ class Tree(object):
         if not tree:
             tree = self.tree_
         for fea_idx in tree.keys():
-            tmp = dict()
-            tmp["name"] = fea_idx.split("__")[0]
+            tmp = {"name": fea_idx.split("__")[0]}
             tmp["value"] = fea_idx.split("__")[1]
             if type(tree[fea_idx]) == dict:
                 tmp["children"] = self.describe_tree(tree[fea_idx])
@@ -127,8 +124,11 @@ class Tree(object):
     def _choose_best_fea(self, x_, y_):
         rst = []
         for i in range(x_.shape[1]):
-            for s_value in set(x_[:, i]):
-                rst.append((i, s_value, gini(x_[:, i], y_=y_, s_=s_value)))
+            rst.extend(
+                (i, s_value, gini(x_[:, i], y_=y_, s_=s_value))
+                for s_value in set(x_[:, i])
+            )
+
         rst.sort(key=lambda x: x[2])
         return rst[0] if rst != [] else rst
 
@@ -139,7 +139,7 @@ class Tree(object):
         :param y_:
         :return: cart_tree
         """
-        cart = dict()
+        cart = {}
         fea = self._choose_best_fea(x_, y_)
         if len(fea) > 0:
             key = fea[:2]
@@ -161,8 +161,6 @@ class Tree(object):
                 y_r = y_[idx_r]
                 cart[key] = {"left": self._build_cart(x_l, y_l),
                              "right": self._build_cart(x_r, y_r)}
-        else:
-            pass
         return cart
 
     def create_cart(self, x_, y_):
@@ -183,15 +181,16 @@ def gini(x_, y_=None, s_=None):
     """
     if y_ is None:
         x_values = list(set(x_))
-        p = 0
-        for x_value in x_values:
-            p += (x_[x_ == x_value].shape[0] / x_.shape[0]) ** 2
+        p = sum(
+            (x_[x_ == x_value].shape[0] / x_.shape[0]) ** 2
+            for x_value in x_values
+        )
+
         return 1 - p
     else:
         D1 = y_[x_ == s_]
         D2 = y_[x_ != s_]
-        rst = D1.shape[0]/y_.shape[0]*gini(D1)+D2.shape[0]/y_.shape[0]*gini(D2)
-        return rst
+        return D1.shape[0]/y_.shape[0]*gini(D1)+D2.shape[0]/y_.shape[0]*gini(D2)
 
 
 def cal_ent(x):

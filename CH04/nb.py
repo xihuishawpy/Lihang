@@ -28,7 +28,7 @@ class NB(object):
         self.class_count_ = y[y.columns[0]].value_counts()
         self.class_prior_ = self.class_count_/y.shape[0]
         # prior
-        self.prior_ = dict()
+        self.prior_ = {}
         for idx in X.columns:
             for j in self.classes_:
                 p_x_y = X[(y == j).values][idx].value_counts()

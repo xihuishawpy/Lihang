@@ -74,8 +74,7 @@ class BiSection(object):
         return v_min, f_min, err_his_f
 
     def predict(self, x_):
-        y_pred = self.f_min(x_, self.v_min)
-        return y_pred
+        return self.f_min(x_, self.v_min)
 
     def __gen_threshold_lst(self, start_, end_):
         # todo: update algo
@@ -93,7 +92,7 @@ class AdaBoost(object):
 
     def fit(self, x_, y_):
         self.d_ = np.ones(x_.size) / x_.size
-        for m in range(self.max_iter_):
+        for _ in range(self.max_iter_):
             clf = self.ds_()
             clf.fs = self.fs
             v, fv, err_his_f = clf.fit(x_, y_, d_=self.d_)
@@ -116,10 +115,7 @@ class AdaBoost(object):
             #
 
     def predict(self, x_):
-        res = 0
-        for clf in self.clfs_:
-            res += clf[0] * clf[1].predict(x_)
-            # print(id(clf), clf[0], clf[1].predict(x_))
+        res = sum(clf[0] * clf[1].predict(x_) for clf in self.clfs_)
         return np.sign(res)
 
 
@@ -136,7 +132,7 @@ class AdaBoostRegressor(object):
     def fit(self, x_, y_):
         self.rgs_ = []
         rs = y_
-        for m in range(self.max_iter_):
+        for _ in range(self.max_iter_):
             ms, theta = AdaBoostRegressor.calc_ms(rs)
             rs = AdaBoostRegressor.calc_res(x_, rs, theta)
             loss = np.sum(rs**2)
@@ -178,5 +174,4 @@ class AdaBoostRegressor(object):
         return rst
 
 
-if __name__ == '__main__':
-    pass
+pass

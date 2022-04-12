@@ -78,12 +78,10 @@ class KNN(object):
         return self.kdtree
 
     def predict(self, X):
-        rst = self._search(X, self.kdtree)
-        return rst
+        return self._search(X, self.kdtree)
 
     def predict_proba(self, X):
         pass
 
 
-if __name__ == '__main__':
-    pass
+pass

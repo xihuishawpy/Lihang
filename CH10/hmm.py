@@ -145,10 +145,9 @@ class HMM(object):
     def fit(self, X):
         # 估计模型参数
         self.init_param(X)
-        for n_iter in range(self.n_iters):
+        for _ in range(self.n_iters):
             self._do_estep(X)
             self._do_mstep(X)
-            # convergence check
         #    if False:
         #        return rst
         return self
@@ -194,17 +193,13 @@ class HMM(object):
         return states
 
     def predict_proba(self):
-        post_prior = 0
-
-        return post_prior
+        return 0
 
     def sample(self):
-        rst = None
-        return rst
+        return None
 
     def score(self):
-        rst = None
-        return rst
+        return None
 
 
 if __name__ == '__main__':

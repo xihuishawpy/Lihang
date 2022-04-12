@@ -80,9 +80,9 @@ class SVM(object):
                     b2 = self.b - ej - y[i] * (self.alpha[i] - alphaiold) * np.dot(X[i, :], X[j, :]) - \
                          y[j] * (self.alpha[j] - alphajold) * np.dot(X[j, :], X[j, :])
 
-                    if (0 < self.alpha[i]) and (self.C > self.alpha[j]):
+                    if self.alpha[i] > 0 and self.C > self.alpha[j]:
                         self.b = b1
-                    elif (0 < self.alpha[j]) and (self.C > self.alpha[j]):
+                    elif self.alpha[j] > 0 and self.C > self.alpha[j]:
                         self.b = b2
                     else:
                         self.b = (b1 + b2) / 2
@@ -101,22 +101,23 @@ class SVM(object):
         return self.alpha, self.b
 
     def _do_gxi(self, X, y, i):
-        gxi = np.sum(self.alpha*y*np.dot(X, X[i, :]), axis=0) + self.b
-        return gxi
+        return np.sum(self.alpha*y*np.dot(X, X[i, :]), axis=0) + self.b
 
     def _do_ei(self, X, y, i):
-        ei = self._do_gxi(X, y, i) - y[i]
-        return ei
+        return self._do_gxi(X, y, i) - y[i]
 
     @staticmethod
     def _do_eta(X, i, j):
-        eta = 2 * np.dot(X[i, :], X[j, :]) - np.dot(X[i, :], X[i, :]) - np.dot(X[j, :], X[j, :])
-        return eta
+        return (
+            2 * np.dot(X[i, :], X[j, :])
+            - np.dot(X[i, :], X[i, :])
+            - np.dot(X[j, :], X[j, :])
+        )
 
     @staticmethod
     def _do_selectj(i, m):
         j = i
-        while j == i:
+        while j == j:
             j = int(np.random.uniform(0, m))
         return j
 
